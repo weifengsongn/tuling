@@ -20,6 +20,7 @@ public class ClassLoadStudy {
 		Method printf = aClass.getDeclaredMethod("print", null);
 		Object invoke = printf.invoke(o, null);
 		System.out.println(o.getClass().getClassLoader());
+
 	}
 
 	static class TestClassLoad extends ClassLoader{

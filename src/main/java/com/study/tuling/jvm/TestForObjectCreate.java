@@ -10,13 +10,13 @@ package com.study.tuling.jvm;
 public class TestForObjectCreate {
 	public static void main(String[] args) {
 
-		System.out.println(new A());
+		System.out.println(new Abcd());
 	}
 }
 
-class A{
+class Abcd {
 	public String name = "zs";
-	A(){
+	Abcd(){
 		name = "ls";
 		age = "123";
 	}

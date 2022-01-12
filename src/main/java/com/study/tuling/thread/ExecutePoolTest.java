@@ -2,6 +2,7 @@ package com.study.tuling.thread;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
+import org.openjdk.jol.info.ClassLayout;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -54,12 +55,13 @@ public class ExecutePoolTest {
 				while (pool1.getActiveCount() > 0 || mainBlackFlag == false) {
 					Thread.yield();
 				}
+				System.out.println(ClassLayout.parseInstance(object).toPrintable());
 				synchronized (object1) {
 					mainBlackFlag = false;
 					LockSupport.unpark(main);
 				}
 			}).start();
-			// 阻塞不会释放锁？
+			// 此处并未阻塞。park()后，线程一致在自旋
 			synchronized (object) {
 				mainBlackFlag = true;
 				LockSupport.park();

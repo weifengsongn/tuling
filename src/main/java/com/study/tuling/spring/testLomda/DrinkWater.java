@@ -1,11 +1,15 @@
 package com.study.tuling.spring.testLomda;
 
+import org.springframework.stereotype.Component;
+
 /**
  * 喝水
  *
  * @author wfsong
  * @date 2022/1/17 10:27
  */
+
+@Component
 public class DrinkWater {
 
 	public static void main(String[] args) {

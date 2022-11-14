@@ -1,11 +1,10 @@
 package com.study.tuling.springpool;
 
 import com.study.tuling.springpool.config.SpringConfig;
+import com.study.tuling.springpool.interfaces.DynamicProxyInterface;
 import com.study.tuling.springpool.service.OrderService;
 import com.study.tuling.springpool.service.UserService;
 import org.junit.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author wfsong
@@ -25,6 +24,10 @@ public class SwfApplicationConTextTest {
 
 		// 依赖注入
 		userService.fieldOut();
+
+		// 动态代理测试
+		DynamicProxyInterface studyService = (DynamicProxyInterface)applicationConText.getBean("studyService");
+		studyService.learn();
 	}
 
 

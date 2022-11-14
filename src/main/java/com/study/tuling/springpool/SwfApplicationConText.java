@@ -5,13 +5,17 @@ import com.study.tuling.springpool.annotations.SwfComponent;
 import com.study.tuling.springpool.annotations.SwfComponentSacn;
 import com.study.tuling.springpool.annotations.SwfScope;
 import com.study.tuling.springpool.entry.BeanDefinition;
-import com.study.tuling.springpool.interfaces.SwfInitializingBean;
+import com.study.tuling.springpool.interfaces.SwfBeanPostProcessor;
+import com.study.tuling.springpool.service.SwfInitializingBean;
 
 import java.beans.Introspector;
 import java.io.File;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -23,6 +27,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class SwfApplicationConText {
 	private Map<String, BeanDefinition> definitionMap = new ConcurrentHashMap<>();
 	private Map<String, Object> beanMap = new ConcurrentHashMap<>();
+	private Set<SwfBeanPostProcessor> postProcessorSet = new HashSet<>();
+
 
 	/**
 	 * 解析配置，生成bean容器
@@ -63,6 +69,11 @@ public class SwfApplicationConText {
 						Class<?> aClass = classLoader.loadClass(javaPath + "." + listFile.getName().substring(0, listFile.getName().indexOf(".class")));
 						// 检查是否使用了component;
 						if (aClass.isAnnotationPresent(SwfComponent.class)) {
+							// 判断是否当前接口类型
+							if (SwfBeanPostProcessor.class.isAssignableFrom(aClass)) {
+								postProcessorSet.add((SwfBeanPostProcessor) aClass.getConstructor().newInstance());
+							}
+
 							SwfComponent swfComponent = aClass.getAnnotation(SwfComponent.class);
 							String beanName = swfComponent.value();
 							if ("".equals(beanName)) {
@@ -73,6 +84,14 @@ public class SwfApplicationConText {
 							beanDefinition.setBeanClass(aClass);
 						}
 					} catch (ClassNotFoundException e) {
+						e.printStackTrace();
+					} catch (InvocationTargetException e) {
+						e.printStackTrace();
+					} catch (InstantiationException e) {
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					} catch (NoSuchMethodException e) {
 						e.printStackTrace();
 					}
 				}
@@ -107,6 +126,9 @@ public class SwfApplicationConText {
 	 *       （1）检查是否实现接口；
 	 *       （2）如果实现，直接调用父类方法，在创建后
 	 * </p>
+	 * <p>
+	 *     3. AOP
+	 * </p>
 	 *
 	 * @param definition
 	 * @param beanName
@@ -135,10 +157,20 @@ public class SwfApplicationConText {
 				}
 			}
 
+
+			for (SwfBeanPostProcessor processor : postProcessorSet) {
+				beanObj = processor.beforeProcessor(beanObj, beanName);
+			}
+
 			//回调
 			if (beanObj instanceof SwfInitializingBean) {
 				((SwfInitializingBean)beanObj).afterBreak();
 			}
+
+			for (SwfBeanPostProcessor processor : postProcessorSet) {
+				beanObj = processor.afterProcessor(beanObj, beanName);
+			}
+
 		} catch (InstantiationException e) {
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {

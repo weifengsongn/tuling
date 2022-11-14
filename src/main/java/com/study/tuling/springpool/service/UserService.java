@@ -3,7 +3,6 @@ package com.study.tuling.springpool.service;
 import com.study.tuling.springpool.annotations.SwfAutowired;
 import com.study.tuling.springpool.annotations.SwfComponent;
 import com.study.tuling.springpool.annotations.SwfScope;
-import com.study.tuling.springpool.interfaces.SwfInitializingBean;
 
 /**
  * a

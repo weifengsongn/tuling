@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.lang.reflect.Field;
 import java.util.Objects;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * @author wfsong
  * @date 2022/10/21 18:02

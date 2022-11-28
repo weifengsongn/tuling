@@ -29,7 +29,7 @@ public class BeanTest {
  * @author wfsong
  * @date 2022/1/17 10:05
  */
-@Configuration
+//@Configuration
 class Configure{
 	@Bean
 	public userA getUserA(@Autowired UserB userB) {
